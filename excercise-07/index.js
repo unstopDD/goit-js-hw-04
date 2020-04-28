@@ -31,7 +31,7 @@ const account = {
       amountTransactions: amount,
       typeTransactions: type,
     };
-    this.transactions.push(transaction);
+    return transaction;
   },
 
   /*
@@ -42,7 +42,8 @@ const account = {
    */
   deposit(amount) {
     this.balance += amount;
-    this.createTransaction(amount, Transaction.DEPOSIT);
+    const addHistory = this.createTransaction(amount, Transaction.DEPOSIT);
+    this.transactions.push(addHistory);
     return `Операция прошла успешно, ${amount} зачисленно на ваш счёт`;
   },
 
@@ -58,10 +59,12 @@ const account = {
   withdraw(amount) {
     if (amount <= this.balance) {
       this.balance -= amount;
-      this.createTransaction(amount, Transaction.WITHDRAW);
+      const addHistory = this.createTransaction(amount, Transaction.WITHDRAW);
+      this.transactions.push(addHistory);
     } else {
       return `Невозможно выполнить транзакцию, недостаточно средств`;
     }
+
     return `Операция прошла успешно, ${amount} снято с Вашего счета`;
   },
 
@@ -90,25 +93,15 @@ const account = {
    * определенного типа транзакции из всей истории транзакций
    */
   getTransactionTotal(type) {
-    let totalDeposit = 0;
-    let totalWithdraw = 0;
+    let total = 0;
+
     // eslint-disable-next-line
     for (const transaction of this.transactions) {
-      if (transaction.typeTransactions === Transaction.DEPOSIT) {
-        totalDeposit += transaction.amountTransactions;
-      }
-      if (transaction.typeTransactions === Transaction.WITHDRAW) {
-        totalWithdraw += transaction.amountTransactions;
+      if (transaction.typeTransactions === type) {
+        total += transaction.amountTransactions;
       }
     }
-
-    if (type === Transaction.DEPOSIT) {
-      return totalDeposit;
-    }
-    if (type === Transaction.WITHDRAW) {
-      return totalWithdraw;
-    }
-    return 'Неверный тип транзакции';
+    return total;
   },
 };
 

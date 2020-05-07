@@ -1,12 +1,33 @@
 'use strict';
 
-const countProps = function(obj) {
-  const keys = Object.keys(obj);
-  return keys.length;
+const inventory = {
+  items: ['Knife', 'Gas mask'],
+  add(itemName) {
+    console.log(`Adding ${itemName} to inventory`);
+
+    inventory.items.push(itemName);
+  },
+  remove(itemName) {
+    console.log(`Removing ${itemName} from inventory`);
+
+    inventory.items = inventory.items.filter(item => item !== itemName);
+  },
 };
 
-console.log(countProps({})); // 0
+const invokeInventoryAction = function(itemName, action) {
+  console.log(`Invoking action on ${itemName}`);
 
-console.log(countProps({ name: 'Mango', age: 2 })); // 2
+  action(itemName);
+};
 
-console.log(countProps({ mail: 'poly@mail.com', isOnline: true, score: 500 })); // 3
+invokeInventoryAction('Medkit', inventory.add);
+// Invoking action on Medkit
+// Adding Medkit to inventory
+
+console.log(inventory.items); // ['Knife', 'Gas mask', 'Medkit']
+
+invokeInventoryAction('Gas mask', inventory.remove);
+// Invoking action on Gas mask
+// Removing Gas mask from inventory
+
+console.log(inventory.items); // ['Knife', 'Medkit']
